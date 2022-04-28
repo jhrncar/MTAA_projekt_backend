@@ -1,0 +1,561 @@
+openapi: 3.0.0
+info:
+  title: MTAA zadanie
+  description: Jednotlive endpointy pre aplikáciu Bazoš
+  version: 0.3.0
+
+
+paths:
+  /ads:
+    get:
+      tags:
+        - "Vyfiltrovanie inzerátov"
+      summary: Vráti zoznam vyfiltrovaných inzerátov
+      description: >
+        Filtrovať bude možné pomocou parametrov:
+        
+
+          - `name` - povinný parameter
+          - `category` - povinný parameter
+          - `min_prize` - nepovinný parameter
+          - `max_prize` - nepovinný parameter
+          - `district` - nepovinný parameter
+          - `page` - nepovinný parameter, ak nebude zadaný bude braná hodnota 1
+          
+        výsledky filtorvania budú stránkované po 10 zoradené budú podľa stĺpca created_at v tabulke Advertisments tak, aby sa na začiatku zobrazovali
+        najnovšie inzeráty
+        
+        `GET /get_ads/?category=elektronika&name=pocitac`
+      
+      responses:
+        '200':
+          description: List záznamov z tabuľky `Advertisments`
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  items:
+                    type: string
+                    example:
+                      - id: 1
+                        name: Pocitac Lenovo pouzivany 1 rok
+                        description: Pocitac je plne funkcny
+                        prize: 700€
+                        district: Senec
+                        city: Senec
+                        zip_code: 90301
+                        street: Hlavna
+                        owner_id: 1
+                        status: dostupny
+                      - id: 2
+                        name: Pocitac dell nepouzity
+                        description: Predam novy pocitac
+                        prize: 1400€
+                        district: Senec
+                        city: Senec
+                        zip_code: 90301
+                        street: Hlavna
+                        owner_id: 5
+                        status: rezervovany
+                      
+  
+  /ad_detail:
+    get:
+      tags:
+        - "Detail inzerátu"
+      summary: Vráti detail inzerátu z tabulky Advertisments podla parametru id
+      description: >
+        
+        
+        
+        `GET /ad_detail/?id=1`
+      responses:
+        '200':
+          description: Konkrétny záznam z tabuľky `Advertisments`
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  items:
+                    type: string
+                    example:
+                      - id: 5
+                        name: Pocitac Lenovo pouzivany 1 rok
+                        description: Pocitac je plne funkcny
+                        prize: 700€
+                        district: Senec
+                        city: Senec
+                        zip_code: 90301
+                        street: Hlavna
+                        owner_id: 6
+                        status: dostupny
+                      
+                      
+  
+  /favourite_ads:
+    get:
+      tags:
+        - "Obľubené inzeráty"
+      summary: Vráti zoznam obľúbených inzerátov z tabulky `Advertisments` pomocou cudzích kľúčov user_id a advertisment_id z tabuľky `Favourite_advertisments`.
+      description: >
+        
+                Server odpovie status kódom 200 v spolu s požadovanými dátami, ktoré budú stránkované (ak to bude nutné) podľa paramteru page po 10 inzerátoch na 1 stránku
+        
+                `GET /favourite_ads/?user_id=1`
+      responses:
+        '200':
+          description: Vyfiltrované záznamy z tabuľky `Advertisments`
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  items:
+                    type: string
+                    example:
+                      - id: 1
+                        name: Pocitac lenovo pouzivany 1 rok
+                        description: Pocitac je plne funkcny
+                        prize: 700€
+                        district: Senec
+                        city: Senec
+                        zip_code: 90301
+                        street: Hlavna
+                        owner_id: 3
+                        status: dostupny
+                      - id: 2
+                        name: Pocitac dell nepouzity
+                        description: Predam novy pocitac
+                        prize: 1400€
+                        district: Senec
+                        city: Senec
+                        zip_code: 90301
+                        street: Hlavna
+                        owner_id: 5
+                        status: rezervovany
+                      
+  
+  /my_ads:
+    get:
+      tags:
+        - "Inzeráty vytvorené používateľom"
+      summary: Vráti zoznam inzerátov z tabulky `Advertisments` ktoré boli vytvorené používateľom.
+      description: >
+        
+        Server odpovie status kódom 200 v spolu s požadovanými dátami. Tie budú rovnako ako v predchádzajúcich prípadoch stránkované (ak to bude nutné) podľa paramteru page po 10 inzerátoch na 1 stránku
+        
+        `GET /my_ads/?user_id=1`
+      responses:
+        '200':
+          description: Vyfiltrované záznamy z tabuľky `Advertisments`
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  items:
+                    type: string
+                    example:
+                      - id: 1
+                        name: Pocitac lenovo pouzivany 1 rok
+                        description: Pocitac je plne funkcny
+                        prize: 700€
+                        district: Senec
+                        city: Senec
+                        zip_code: 90301
+                        street: Hlavna
+                        owner_id: 1
+                        status: dostupny
+                      - id: 2
+                        name: Pocitac dell nepouzity
+                        description: Predam novy pocitac
+                        prize: 1400€
+                        district: Senec
+                        city: Senec
+                        zip_code: 90301
+                        street: Hlavna
+                        owner_id: 1
+                        status: rezervovany
+  
+  /user_profile:
+    get:
+      tags:
+        - "Zobrazenie profilu iného používateľa"
+      summary: Vráti profil používateľa z tabuľky Users.
+      description: >
+        Profil sa vyfiltruje pomocou parametru user_id.
+        
+        Server odpovie status kódom 200 v spolu s požadovanými dátami. 
+        
+        `GET /user_profile/?user_id=1`
+      responses:
+        '200':
+          description: Záznam z tabuľky `Users`
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  items:
+                    type: string
+                    example:
+                      - id: 1
+                        name: Janko
+                        surname: Hrasko
+                        email: janko@mail.sk
+                        district: Senec
+                        city: Senec
+                        zip_code: 90301
+                        street: Hlavna
+                        phone: 0900 000 000
+                      
+  
+  /my_profile:
+    get:
+      tags:
+        - "Zobrazenie profilu prihlaseneho používateľa"
+      summary: Vráti profil používateľa z tabuľky Users.
+      description: >
+        Profil sa vyfiltruje pomocou parametru user_id.
+        
+        Server odpovie status kódom 200 v spolu s požadovanými dátami. 
+        
+        `GET /user_profile/?user_id=1`
+      responses:
+        '200':
+          description: Záznam z tabuľky `Users`
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  items:
+                    type: string
+                    example:
+                      - id: 1
+                        name: Janko
+                        surname: Hrasko
+                        email: janko@mail.sk
+                        password: heslo123
+                        district: Senec
+                        city: Senec
+                        zip_code: 90301
+                        street: Hlavna
+                        phone: 0900 000 000
+                      
+  
+  
+  /register:
+    post:
+      tags:
+       - "Registrácia používateľa"
+      summary: Slúži na zaregistrovanie používateľa
+      description: >
+        Parametre:
+        
+          - `name`: povinné pole
+          - `surname`: povinné pole
+          - `email`: povinné pole
+          - `password`: povinné pole
+          - `district`: nepovinné pole
+          - `city`: nepovinné pole
+          - `zip_code`: nepovinné pole
+          - `street`: nepovinné pole
+          - `phone`: nepovinné pole
+          
+
+        Systém automaticky doplní  časový údaj `created_at` do databázy 
+         V prípade úspešnej registrácie, server vráti HTTP status kód 204 s prázdnym telom
+        
+        
+        V prípade nejakej chyby server vráti HTTP status kód 422 s telom v ktorom bude popísané, kde je chyba
+      responses:
+        '204':
+          description: V prípade úspešného záznamu, server vracia prázdnu odpoveď
+                  
+        '422':
+          description: Detaily rôznych chýb (napr. email je uz v databaze, alebo chýba niektoré z pozadovaných polí)
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        field:
+                          type: string
+                        reasons:
+                          type: array
+                    example:
+                      - field: email
+                        reasons: [required, not_unique]
+                      - field: name
+                        reasons: [required]
+                      - field: surname
+                        reasons: [required]
+                      - field: password
+                        reasons: [required]
+                      
+  
+  /create_new_ad:
+    post:
+      tags:
+       - "Pridanie nového inzerátu"
+      summary: Prihlásený používateľ môže pridať nový inzerát
+      description: >
+        Parametre:
+        
+          - `name`: povinné pole
+          - `prize`: povinné pole
+          - `district`: povinné pole
+          - `city`: povinné pole
+          - `picture`: nepovinné pole
+          - `zip_code`: nepovinné pole
+          - `street`: nepovinné pole
+          
+          
+
+        Systém automaticky doplní časový údaj  `created_at` do databázy. Rovnako sa status inzerátu nastaví na dostupný 
+        
+        
+        
+      responses:
+        '204':
+          description: V prípade úspešného záznamu, server vracia prázdnu odpoveď
+                  
+        '422':
+          description: V prípade nejakej chyby server vráti HTTP status kód 422 s telom v ktorom bude popísané, kde je chyba. Detaily rôznych chýb (napr. email je uz v databáze, alebo chýba niektoré z pozadovaných polí)
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        field:
+                          type: string
+                        reasons:
+                          type: array
+                    example:
+                      - field: name
+                        reasons: [required]
+                      - field: prize
+                        reasons: [required, not_number]
+                      - field: district
+                        reasons: [required]
+                      - field: city
+                        reasons: [required]
+  
+  
+  
+  
+  /add_favourite_ads:
+    post:
+      tags:
+       - "Pridanie inzerátu medzi obľubené"
+      summary: Používateľ si môže pridať inzerát medzi svoje obľúbené
+      description: >
+        
+        Pridanie sa realizuje pomocou parametru ad_id ktorý predtavuje id inzerátu a 
+        paramteru user_id predstavujúceho id používateľa, ktorý si inzerát pridáva medzi svoje obľúbené.
+        
+        
+        `POST /add_favourite_ads/?ad_id=1&user_id=5`
+      responses:
+        '204':
+          description: V prípade úspešného pridania záznamu, server vracia prázdnu odpoveď
+                  
+        '422':
+          description: V prípade chyby (id inzerátu neexistuje) sa vráti http kód 422
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        field:
+                          type: string
+                        reasons:
+                          type: array
+                    example:
+                      - field: ad_id
+                        reasons: [invalid_id]
+                      
+
+  
+  /add_contact:
+    post:
+      tags:
+       - "Pridanie iného používateľa medzi kontakty"
+      summary: Používateľ si môže pridať iného používateľa medzi svoje kontakty
+      description: >
+        
+        Pridanie sa realizuje pomocou parametru contact_id ktorý predtavuje id kontaktu a 
+        paramteru user_id predstavujúceho id používateľa, ktorý si iného používateľa pridáva medzi svoje kontakty.
+        
+        `POST /add_contact/?contact_id=1&user_id=5`
+      responses:
+        '204':
+          description: V prípade úspešného pridania záznamu, server vracia prázdnu odpoveď
+                  
+        '422':
+          description: V prípade chyby (id kontaktu neexistuje) sa vráti http kód 422
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        field:
+                          type: string
+                        reasons:
+                          type: array
+                    example:
+                      - field: contact_id
+                        reasons: [invalid_id]
+                      
+
+  /update_profile:
+    put:
+      tags:
+        - "Úprava profilu používateľom"
+      summary: Používateľ si môže upraviť informácie vo svojom profile.
+      description: >
+        Profil sa identifikuje pomocou parametru user_id z tabuľky Users.
+        
+        Server odpovie http kódom 201 v spolu s upravenými dátami.
+        
+        `PUT /update_profile/?user_id=1&name=Ferko`
+      responses:
+        '201':
+          description: Záznam z tabuľky `Users`
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  items:
+                    type: string
+                    example:
+                      - id: 1
+                        name: Ferko
+                        surname: Hrasko
+                        email: janko@mail.sk
+                        district: Senec
+                        city: Senec
+                        zip_code: 90301
+                        street: Hlavna
+                        phone: 0900 000 000
+        
+        '422':
+          description: Ak by používateľ nechal niektoré z povinných polí prázdne (name, surname, email, password ) server odpovie http kódom 422 s opísanou chybou      
+        
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        field:
+                          type: string
+                        reasons:
+                          type: array
+                    example:
+                      - field: name
+                        reasons: [required]
+                      - field: surname
+                        reasons: [required]
+                      - field: email
+                        reasons: [required]
+                      - field: password
+                        reasons: [required]
+        
+
+  /update_ad:
+    put:
+      tags:
+       - "Zmena inzerátu"
+      summary: Prihlásený používateľ môže zmeniť údaje v inzeráte, ktorý vlastní
+      description: >
+        Inzerát ktorý sa má zmenit bude identifikovaný pomocou parametru ad_id, ktorý predstavuje stĺpec id v tabuľke Advertisments
+        Parametre ktoré je možné meniť:
+        
+          - `name` 
+          - `prize` 
+          - `district` 
+          - `city`
+          - `picture` 
+          - `zip_code` 
+          - `street`
+          - `picture`
+          - `status`
+          
+        
+        
+        príklad volania: `PUT /update_ad/?ad_id=1&prize=2000`
+        
+      responses:
+        '204':
+          description: V prípade úspešného záznamu, server vracia prázdnu odpoveď
+                  
+        '422':
+          description: V prípade nejakej chyby (povinné pole bude prázdne) server vráti HTTP status kód 422 s telom v ktorom bude popísané, kde je chyba          Detaily rôznych chýb (napr. email je uz v databáze, alebo chýba niektoré z pozadovaných polí)
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        field:
+                          type: string
+                        reasons:
+                          type: array
+                    example:
+                      - field: name
+                        reasons: [required]
+                      - field: prize
+                        reasons: [required, not_number]
+                      - field: district
+                        reasons: [required]
+                      - field: city
+                        reasons: [required]
+  
+  
+  
+  
+  /delete_ad:
+    delete:
+      tags:
+        - "Zmazanie inzerátu používateľom"
+      summary: .
+      description: >
+        Inzerát je identifikovaný pomocou paramtru ad_id, ktorý predstavuje id inzerátu v tabuľke advertisments
+        
+        `DELETE /delete_ad/?ad_id=1`
+      responses:
+        '204':
+          description: Odpoveď servera v prípade úspešného zmazania inzerátu
+          
+        '404':
+          description: Odpoveď servera ak inzerát s požadovaným id neexistuje 
+
+  
+  
